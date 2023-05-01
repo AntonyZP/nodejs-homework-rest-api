@@ -30,9 +30,12 @@ const updateById = async (req, res) => {
   res.json(result);
 };
 
-const updateFavorite = async (req, res) => {
+const updateStatusContact = async (req, res) => {
   const { id } = req.params;
   const result = await Contact.findByIdAndUpdate(id, req.body, { new: true });
+  if (!Object.keys(req.body).length) {
+    throw HttpError(400, "missing field favorite");
+  }
   if (!result) {
     throw HttpError(404, "Not found");
   }
@@ -55,6 +58,6 @@ module.exports = {
   getById: ctrlWrapper(getById),
   add: ctrlWrapper(add),
   updateById: ctrlWrapper(updateById),
-  updateFavorite: ctrlWrapper(updateFavorite),
+  updateFavorite: ctrlWrapper(updateStatusContact),
   removeById: ctrlWrapper(removeById),
 };
