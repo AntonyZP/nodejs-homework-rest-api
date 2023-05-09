@@ -15,8 +15,8 @@ const getAll = async (req, res) => {
 };
 
 const getById = async (req, res) => {
-  const { id } = req.params;
-  const result = await Contact.findById(id);
+  const { _id: owner } = req.user;
+  const result = await Contact.findById({ _id: req.params.id, owner });
   if (!result) {
     throw HttpError(404, "Not found");
   }
@@ -32,8 +32,13 @@ const add = async (req, res) => {
 };
 
 const updateById = async (req, res) => {
-  const { id } = req.params;
-  const result = await Contact.findByIdAndUpdate(id, req.body, { new: true });
+  const { _id: owner } = req.user;
+
+  const result = await Contact.findByIdAndUpdate(
+    { _id: req.params.id, owner },
+    req.body,
+    { new: true }
+  );
   if (!result) {
     throw HttpError(404, "Not found");
   }
@@ -42,8 +47,12 @@ const updateById = async (req, res) => {
 };
 
 const updateStatusContact = async (req, res) => {
-  const { id } = req.params;
-  const result = await Contact.findByIdAndUpdate(id, req.body, { new: true });
+  const { _id: owner } = req.user;
+  const result = await Contact.findByIdAndUpdate(
+    { _id: req.params.id, owner },
+    req.body,
+    { new: true }
+  );
   if (!Object.keys(req.body).length) {
     throw HttpError(400, "missing field favorite");
   }
@@ -55,8 +64,11 @@ const updateStatusContact = async (req, res) => {
 };
 
 const removeById = async (req, res) => {
-  const { id } = req.params;
-  const result = await Contact.findByIdAndRemove(id);
+  const { _id: owner } = req.user;
+  const result = await Contact.findByIdAndRemove({
+    _id: req.params.id,
+    owner,
+  });
   if (!result) {
     throw HttpError(404, "Not found");
   }
