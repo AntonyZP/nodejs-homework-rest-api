@@ -8,7 +8,7 @@ const { HttpError, ctrlWrapper } = require("../helpers");
 const { SECRET_KEY } = process.env;
 
 const register = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, subscription } = req.body;
   const user = await User.findOne({ email });
 
   if (user) {
@@ -17,11 +17,17 @@ const register = async (req, res) => {
 
   const hashPassword = await bcrypt.hash(password, 10);
 
-  const newUser = await User.create({ ...req.body, password: hashPassword });
+  const newUser = await User.create({
+    ...req.body,
+    password: hashPassword,
+    subscription,
+  });
 
   res.status(201).json({
-    email: newUser.email,
-    subscription: newUser.subscription,
+    user: {
+      email: newUser.email,
+      subscription: newUser.subscription,
+    },
   });
 };
 
@@ -45,8 +51,10 @@ const login = async (req, res) => {
 
   res.json({
     token,
-    email: user.email,
-    subscription: user.subscription,
+    user: {
+      email: user.email,
+      subscription: user.subscription,
+    },
   });
 };
 
