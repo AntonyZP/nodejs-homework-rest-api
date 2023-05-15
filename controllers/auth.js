@@ -49,8 +49,8 @@ const register = async (req, res) => {
 };
 
 const verifyEmail = async (req, res) => {
-  const { verificationToken } = req.params;
-  const user = await User.findOne({ verificationToken });
+  const { verificationCode } = req.params;
+  const user = await User.findOne({ verificationCode });
   if (!user) {
     throw HttpError(404, 'User not found');
   }
@@ -73,8 +73,8 @@ const resendVerifyEmail = async (req, res) => {
    const verifyEmail = {
     to: email, 
     subject: 'Verify email',
-    html: `<a target="_blank" href="${BASE_URL}/api/users/verify/${verificationCode}">Click verify email</a>`
-    }
+    html: `<a target="_blank" href="${BASE_URL}/api/users/verify/${user.verificationCode}">Click verify email</a>`
+  }
   await sendEmail(verifyEmail);
   res.status(200).json({
     message: 'Verification email sent'
@@ -153,6 +153,7 @@ const updateAvatar = async (req, res) => {
     avatarURL,
   });
 };
+
 module.exports = {
   register: ctrlWrapper(register),
   verifyEmail: ctrlWrapper(verifyEmail),
